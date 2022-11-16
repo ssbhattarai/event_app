@@ -16,4 +16,10 @@ class Event extends Model
         'end_date',
         'is_live'
     ];
+
+
+    public function scopeOrder($q,$column,$order = 'asc')
+    {
+        return $q->orderBy($column,$order);
+    }
 }
