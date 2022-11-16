@@ -15,6 +15,11 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->timestamp('start_date');
+            $table->timestamp('end_date');
+            $table->unsignedTinyInteger('is_live')->default(0);
             $table->timestamps();
         });
     }
