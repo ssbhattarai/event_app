@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\EventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -27,9 +30,25 @@ class EventController extends Controller
      * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(EventRequest $request): JsonResponse
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            Event::create($request->all());
+
+            DB::commit();
+
+            return \response()->json([
+                'message' => 'Event Created Successfully'
+            ], 201);
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            return \response()->json([
+                'message' => 'Something Went Wrong'
+            ], 500);
+        }
+
     }
 
     /**
