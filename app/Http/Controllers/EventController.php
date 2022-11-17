@@ -43,6 +43,7 @@ class EventController extends Controller
                 'message' => 'Event Created Successfully'
             ], 201);
         } catch (\Exception $exception) {
+
             DB::rollBack();
             return \response()->json([
                 'message' => 'Something Went Wrong'
@@ -67,11 +68,29 @@ class EventController extends Controller
      *
      * @param \Illuminate\Http\Request $request
      * @param int $id
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(EventRequest $request, Event $event)
     {
-        //
+        try {
+            DB::beginTransaction();
+            $data = $request->all();
+
+            $event->update($data);
+
+            DB::commit();
+
+            return \response()->json([
+                'message' => 'Event Updated Successfully'
+            ], 200);
+
+        } catch (\Exception $exception) {
+
+            DB::rollBack();
+            return \response()->json([
+                'message' => 'Something Went Wrong'
+            ], 500);
+        }
     }
 
     /**

@@ -34,7 +34,9 @@
                                         }}</span>
                                 </td>
                                 <td>
-                                    <button class="btn btn-outline-secondary" type="submit">Edit</button>
+                                    <button class="btn btn-outline-secondary" type="button" @click="editEvent(event)">
+                                        Edit
+                                    </button>
                                     <button class="btn btn-outline-dark ms-2" type="submit">View</button>
                                     <button class="btn btn-outline-danger ms-1" type="submit">Delete</button>
                                 </td>
@@ -57,11 +59,11 @@
         <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
              aria-labelledby="staticBackdropLabel" aria-hidden="true">
             <div class="modal-dialog modal-xl">
-                <form @submit.prevent="saveData">
+                <form @submit.prevent="isCreate ? saveData() : updateData()">
                     <div class="modal-content">
 
                         <div class="modal-header">
-                            <h5 class="modal-title" id="staticBackdropLabel">{{ this.title }}</h5>
+                            <h5 class="modal-title" id="staticBackdropLabel">{{ title }}</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -118,11 +120,14 @@ import {Modal} from 'bootstrap'
 export default {
     data() {
         return {
+            isCreate: false,
             events: [],
             page: null,
             perPage: null,
             title: null,
-            formData: {},
+            formData: {
+                id: null
+            },
             errors: [],
             modal: null
         }
@@ -138,6 +143,8 @@ export default {
             this.errors = [];
             axiosInstance.post('events', this.formData).then(res => {
                 this.modal.hide();
+                this.errors = [];
+                this.formData = {};
                 this.getEvents(1);
             }).catch(error => {
                 if (error.response.status === 422) {
@@ -147,7 +154,14 @@ export default {
         },
         updateData() {
             axiosInstance.patch(`events/${this.formData.id}`, this.formData).then(res => {
-
+                this.modal.hide();
+                this.getEvents(1);
+                this.formData = {}
+                this.errors = []
+            }).catch(error => {
+                if (error.response.status === 422) {
+                    this.errors = error.response.data.errors;
+                }
             });
         },
 
@@ -159,7 +173,18 @@ export default {
             })
         },
         addEvent() {
+            this.isCreate = true;
             this.title = "Add New Event";
+            this.formData = {}
+
+            this.modal = new Modal(document.getElementById("staticBackdrop"));
+            this.modal.show();
+        },
+        editEvent(event) {
+            this.isCreate = false;
+            this.title = "Edit Event";
+
+            this.formData = event;
 
             this.modal = new Modal(document.getElementById("staticBackdrop"));
             this.modal.show();
