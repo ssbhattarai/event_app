@@ -8,6 +8,7 @@ use App\Models\Event;
 use http\Env\Response;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
@@ -70,7 +71,7 @@ class EventController extends Controller
      * @param int $id
      * @return JsonResponse
      */
-    public function update(EventRequest $request, Event $event)
+    public function update(EventRequest $request, Event $event): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -98,9 +99,14 @@ class EventController extends Controller
      *
      * @param int $id
      * @return \Illuminate\Http\Response
+     *
      */
-    public function destroy($id)
+    public function destroy(Event $event): JsonResponse
     {
-        //
+        $event->delete();
+
+        return \response()->json([
+            'message' => 'event Delete Successfully'
+        ], 200);
     }
 }

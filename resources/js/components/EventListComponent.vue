@@ -37,8 +37,8 @@
                                     <button class="btn btn-outline-secondary" type="button" @click="editEvent(event)">
                                         Edit
                                     </button>
-                                    <button class="btn btn-outline-dark ms-2" type="submit">View</button>
-                                    <button class="btn btn-outline-danger ms-1" type="submit">Delete</button>
+                                    <button class="btn btn-outline-dark ms-2" type="button">View</button>
+                                    <button class="btn btn-outline-danger ms-1" type="button" @click="deleteEvent(event.id)">Delete</button>
                                 </td>
                             </tr>
                             </tbody>
@@ -188,6 +188,13 @@ export default {
 
             this.modal = new Modal(document.getElementById("staticBackdrop"));
             this.modal.show();
+        },
+        deleteEvent(id) {
+            if (confirm("Are you sure ?")) {
+                axiosInstance.delete(`events/${id}`).then(res => {
+                    this.getEvents(1);
+                });
+            }
         }
     },
     watch: {}
