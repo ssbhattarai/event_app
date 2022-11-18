@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\EventRequest;
 use App\Http\Resources\EventResource;
 use App\Models\Event;
+use Illuminate\Http\Client\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -13,9 +14,19 @@ class EventController extends Controller
 
     public function index(): JsonResponse
     {
+
         $events = Event::query();
-        $events = $events->order('start_date', 'asc')
-            ->paginate(25);
+
+        $events = $events->when(request('filter_events') != 'null' && \request('filter_events') != null, function ($query) {
+            $query->filters(request('filter_events'));
+        });
+
+        $events = $events->when(\request('search_key') != 'null'  && \request('search_key') != null, function ($query) {
+            $query->where('title', 'like', '%'. \request('search_key') . '%');
+        });
+
+
+        $events = $events->orderBy('start_date', 'asc')->paginate(25);
 
         return EventResource::collection($events)
             ->response()

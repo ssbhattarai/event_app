@@ -12,6 +12,25 @@
                     </div>
 
                     <div class="card-body table-responsive">
+                        <div class="row">
+                            <div class="col-4">
+                                <select class="form-select" aria-label="Default select example" v-model="filter_events">
+                                    <option value="finished_events">Finished Events</option>
+                                    <option value="upcoming_events">Upcoming Events</option>
+                                    <option value="upcoming_events_within_7_days">Upcoming Events within 7 days</option>
+                                    <option value="finished_events_of_7_days">Finished Events of 7 Days</option>
+                                </select>
+                            </div>
+                            <div class="col-4">
+                                <input type="text" class="form-control" id="eventTitle" placeholder="Search Any Event"
+                                       v-model="q">
+                            </div>
+                            <div class="col-4">
+                                <button class="btn btn-dark ms-1" type="button"
+                                        @click="clearFilters">Clear Filter
+                                </button>
+                            </div>
+                        </div>
                         <table class="table table-striped">
                             <thead>
                             <tr>
@@ -19,7 +38,7 @@
                                 <th scope="col">Title</th>
                                 <th scope="col">Start Date</th>
                                 <th scope="col">End Date</th>
-<!--                                <th scope="col">Is Live ?</th>-->
+                                <!--                                <th scope="col">Is Live ?</th>-->
                                 <th scope="col">Actions</th>
                             </tr>
                             </thead>
@@ -29,16 +48,16 @@
                                 <td>{{ event.title }}</td>
                                 <td>{{ event.formatted_start_date }}</td>
                                 <td>{{ event.formatted_end_date }}</td>
-<!--                                <td>-->
-<!--                                    <span class="badge bg-secondary">{{-->
-<!--                                            event.is_live === 1 ? 'Active' : 'inactive'-->
-<!--                                        }}</span>-->
-<!--                                </td>-->
+                                <!--                                <td>-->
+                                <!--                                    <span class="badge bg-secondary">{{-->
+                                <!--                                            event.is_live === 1 ? 'Active' : 'inactive'-->
+                                <!--                                        }}</span>-->
+                                <!--                                </td>-->
                                 <td>
                                     <button class="btn btn-outline-secondary" type="button" @click="editEvent(event)">
                                         Edit
                                     </button>
-<!--                                    <button class="btn btn-outline-dark ms-2" type="button">View</button>-->
+                                    <!--                                    <button class="btn btn-outline-dark ms-2" type="button">View</button>-->
                                     <button class="btn btn-outline-danger ms-1" type="button"
                                             @click="deleteEvent(event.id)">Delete
                                     </button>
@@ -131,16 +150,25 @@ export default {
                 id: null
             },
             errors: [],
-            modal: null
+            url: 'events?',
+            modal: null,
+            filter_events: null,
+            q: null
         }
     },
     components: {
         Bootstrap5Pagination
     },
     mounted() {
-        this.getEvents(1);
+        this.getEvents(1, this.url);
     },
     methods: {
+        clearFilters() {
+            this.filter_events = null
+            this.q = null
+
+            this.getEvents(1, this.url);
+        },
         saveData() {
             this.errors = [];
             axiosInstance.post('events', this.formData).then(res => {
@@ -167,9 +195,9 @@ export default {
             });
         },
 
-        getEvents(page) {
+        getEvents(page, url) {
             this.page = page;
-            axiosInstance.get(`events?page=${page}`).then(res => {
+            axiosInstance.get(`${url}page=${page}`).then(res => {
                 this.events = res.data;
                 this.perPage = res.data.meta.per_page
             })
@@ -199,6 +227,14 @@ export default {
             }
         }
     },
-    watch: {}
+    watch: {
+        filter_events(newVal) {
+
+            this.getEvents(1, `${this.url}filter_events=${newVal}&search_key=${this.q}&`);
+        },
+        q(newVal) {
+            this.getEvents(1, `${this.url}filter_events=${this.filter_events}&search_key=${newVal}&`);
+        }
+    }
 }
 </script>
