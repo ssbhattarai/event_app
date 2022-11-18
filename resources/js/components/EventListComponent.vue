@@ -5,7 +5,8 @@
                 <div class="card">
                     <div class="card-header display-6">
                         Event App
-                        <button class="btn btn-secondary" type="submit" data-bs-toggle="modal" data-bs-target="#myModal"
+                        <button class="btn btn-secondary float-end me-5" type="submit" data-bs-toggle="modal"
+                                data-bs-target="#myModal"
                                 @click.prevent="addEvent">Add
                         </button>
                     </div>
@@ -18,7 +19,7 @@
                                 <th scope="col">Title</th>
                                 <th scope="col">Start Date</th>
                                 <th scope="col">End Date</th>
-                                <th scope="col">Is Live ?</th>
+<!--                                <th scope="col">Is Live ?</th>-->
                                 <th scope="col">Actions</th>
                             </tr>
                             </thead>
@@ -28,17 +29,19 @@
                                 <td>{{ event.title }}</td>
                                 <td>{{ event.formatted_start_date }}</td>
                                 <td>{{ event.formatted_end_date }}</td>
-                                <td>
-                                    <span class="badge bg-secondary">{{
-                                            event.is_live === 1 ? 'Active' : 'inactive'
-                                        }}</span>
-                                </td>
+<!--                                <td>-->
+<!--                                    <span class="badge bg-secondary">{{-->
+<!--                                            event.is_live === 1 ? 'Active' : 'inactive'-->
+<!--                                        }}</span>-->
+<!--                                </td>-->
                                 <td>
                                     <button class="btn btn-outline-secondary" type="button" @click="editEvent(event)">
                                         Edit
                                     </button>
-                                    <button class="btn btn-outline-dark ms-2" type="button">View</button>
-                                    <button class="btn btn-outline-danger ms-1" type="button" @click="deleteEvent(event.id)">Delete</button>
+<!--                                    <button class="btn btn-outline-dark ms-2" type="button">View</button>-->
+                                    <button class="btn btn-outline-danger ms-1" type="button"
+                                            @click="deleteEvent(event.id)">Delete
+                                    </button>
                                 </td>
                             </tr>
                             </tbody>
@@ -79,12 +82,12 @@
                                     <input type="text" class="form-control" id="eventTitle" placeholder="Event Title *"
                                            v-model="formData.title" required>
                                 </div>
-                                <div class="col-6 mt-2">
+                                <div class="col-4 mt-2">
                                     <label for="startDate" class="form-label">Start Date *</label>
                                     <input type="datetime-local" class="form-control" id="startDate"
                                            v-model="formData.start_date" required>
                                 </div>
-                                <div class="col-6 mt-2">
+                                <div class="col-4 mt-2">
                                     <label for="endDate" class="form-label">End Date *</label>
                                     <input type="datetime-local" class="form-control" id="endDate"
                                            v-model="formData.end_date" required>
@@ -94,7 +97,6 @@
                                     <textarea class="form-control"
                                               id="description" rows="3" required
                                               v-model="formData.description"></textarea>
-
                                 </div>
                             </div>
                         </div>
